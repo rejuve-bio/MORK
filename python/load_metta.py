@@ -98,3 +98,37 @@ def load_metta_dataset(dataset_path, mork_port, space, clear_before_load=True):
     except Exception as e:
         print(f"Error: Failed to load dataset: {e}")
         return False
+    
+def clear_mork_space(mork_port, space=None):
+    """
+    Clear MORK space or entire server
+    
+    Args:
+        mork_port (int): MORK server port
+        space (str): MORK space to clear, if None clears entire server
+    
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    try:
+        mork_url = f"http://localhost:{mork_port}"
+        print(f"Connecting to MORK server at {mork_url}...")
+        
+        server = ManagedMORK.connect(url=mork_url)
+        print("Connected to MORK server successfully")
+        
+        if space:
+            print(f"Clearing space '{space}'...")
+            with server.work_at(space) as workspace:
+                workspace.clear()
+            print(f"Space '{space}' cleared successfully")
+        else:
+            print("Clearing entire MORK server...")
+            server.clear()
+            print("Entire MORK server cleared successfully")
+        
+        return True
+        
+    except Exception as e:
+        print(f"Error: Failed to clear: {e}")
+        return False
