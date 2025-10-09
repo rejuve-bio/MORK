@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 """
-Enhanced MORK Dataset Loader Script
+MORK Dataset Loader Script
 
 This script loads MeTTa files from a specified path into a MORK server.
 It can also clear spaces without loading data.
 
 Usage: 
-  python enhanced_mork_loader.py --path /path/to/metta/files --port 8431
-  python enhanced_mork_loader.py --clear --port 8431 --space annotation
+  python load_metta.py --path /path/to/metta/files --port 8431
+  python load_metta.py --clear --port 8431 --space annotation
 """
 
 import argparse
@@ -154,19 +154,19 @@ def main():
         epilog="""
 Examples:
   # Load dataset without clearing (default behavior)
-  python enhanced_mork_loader.py --path /path/to/metta/files --port 8431 --space annotation
+  python load_metta.py --path /path/to/metta/files --port 8431 --space annotation
   
   # Load dataset with clearing first
-  python enhanced_mork_loader.py --path /path/to/metta/files --port 8431 --space annotation --clear
+  python load_metta.py --path /path/to/metta/files --port 8431 --space annotation --clear
   
   # Clear specific space only (no loading)
-  python enhanced_mork_loader.py --clear --space annotation --port 8431
+  python load_metta.py --clear --space annotation --port 8431
   
   # Clear entire MORK server (no loading) 
-  python enhanced_mork_loader.py --clear --space all --port 8431
+  python load_metta.py --clear --space all --port 8431
   
   # Verbose output
-  python enhanced_mork_loader.py --path /path/to/metta/files --port 8431 --space annotation --verbose
+  python load_metta.py --path /path/to/metta/files --port 8431 --space annotation --verbose
         """
     )
     
