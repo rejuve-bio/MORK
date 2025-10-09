@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 
+"""
+Enhanced MORK Dataset Loader Script
+
+This script loads MeTTa files from a specified path into a MORK server.
+It can also clear spaces without loading data.
+
+Usage: 
+  python enhanced_mork_loader.py --path /path/to/metta/files --port 8431
+  python enhanced_mork_loader.py --clear --port 8431 --space annotation
+"""
+
+import argparse
 import os
+import sys
 import glob
 import time
 from pathlib import Path
@@ -98,7 +111,7 @@ def load_metta_dataset(dataset_path, mork_port, space, clear_before_load=True):
     except Exception as e:
         print(f"Error: Failed to load dataset: {e}")
         return False
-    
+
 def clear_mork_space(mork_port, space=None):
     """
     Clear MORK space or entire server
@@ -132,3 +145,116 @@ def clear_mork_space(mork_port, space=None):
     except Exception as e:
         print(f"Error: Failed to clear: {e}")
         return False
+
+def main():
+    """Main entry point"""
+    parser = argparse.ArgumentParser(
+        description="Enhanced MORK Dataset Loader - Load MeTTa files or clear MORK spaces",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Load dataset without clearing (default behavior)
+  python enhanced_mork_loader.py --path /path/to/metta/files --port 8431 --space annotation
+  
+  # Load dataset with clearing first
+  python enhanced_mork_loader.py --path /path/to/metta/files --port 8431 --space annotation --clear
+  
+  # Clear specific space only (no loading)
+  python enhanced_mork_loader.py --clear --space annotation --port 8431
+  
+  # Clear entire MORK server (no loading) 
+  python enhanced_mork_loader.py --clear --space all --port 8431
+  
+  # Verbose output
+  python enhanced_mork_loader.py --path /path/to/metta/files --port 8431 --space annotation --verbose
+        """
+    )
+    
+    # Main arguments
+    parser.add_argument(
+        '--path', '-p',
+        help='Path to directory containing .metta files (for loading)'
+    )
+    
+    # Configuration options
+    parser.add_argument(
+        '--port',
+        type=int,
+        help='MORK server port (required)'
+    )
+    
+    parser.add_argument(
+        '--space', '-s',
+        help='MORK space to use (required)'
+    )
+    
+    parser.add_argument(
+        '--clear', '-c',
+        action='store_true',
+        help='Clear before loading (when used with --path) or clear-only mode (when used alone)'
+    )
+    
+    parser.add_argument(
+        '--verbose', '-v',
+        action='store_true',
+        help='Enable verbose output'
+    )
+    
+    args = parser.parse_args()
+    
+    # Validate required arguments
+    if not args.port:
+        parser.error("--port is required")
+    
+    if not args.space:
+        parser.error("--space is required")
+    
+    if not args.path and not args.clear:
+        parser.error("Either --path (to load data) or --clear (clear-only mode) is required")
+    
+    # Print header
+    print("=" * 60)
+    print("Enhanced MORK Dataset Loader")
+    print("=" * 60)
+    
+    if args.verbose:
+        print(f"Configuration:")
+        if args.path:
+            print(f"   Mode: Load dataset")
+            print(f"   Dataset path: {args.path}")
+            print(f"   Clear before load: {args.clear}")
+        else:
+            print(f"   Mode: Clear space only")
+        print(f"   MORK port: {args.port}")
+        print(f"   Target space: {args.space}")
+        print()
+    
+    success = False
+    
+    if args.path:
+        # Load mode (with optional clearing)
+        success = load_metta_dataset(
+            dataset_path=args.path,
+            mork_port=args.port,
+            space=args.space,
+            clear_before_load=args.clear
+        )
+    else:
+        # Clear-only mode
+        if args.space.lower() == 'all':
+            success = clear_mork_space(args.port, space=None)
+        else:
+            success = clear_mork_space(args.port, space=args.space)
+    
+    print("=" * 60)
+    
+    if success:
+        print("Operation completed successfully!")
+        sys.exit(0)
+    else:
+        print("Operation failed!")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
