@@ -16,7 +16,7 @@ python load_metta.py --path /path/to/metta/files --port 8431 --space annotation 
 
 **Clear space only:**
 ```bash
-python enhanced_mork_loader.py --clear --space annotation --port 8431
+python load_metta.py --clear --space annotation --port 8431
 ```
 
 **Options**
