@@ -28,6 +28,24 @@ These instructions pertain to the `server` branch of the `git` repo [here](https
 4. Run a smoke test from Python: `python python/client.py`  
     NOTE: running the server and the client in separate terminals will produce more legible output.  If the server is launched from within python, the server's output is captured.
 
+## Automatic Deployment
+
+First, make the script executable:
+```bash
+chmod +x script.sh
+```
+
+Then build the docker image
+```docker
+docker build -t mork_pathmap .
+```
+
+Then run the docker container
+replace the $path with the path of the customspace builder
+```docker
+docker run -d --name mork_container -p 8231:8231 -v $path/output:/shared/output mork_pathmap
+```
+
 ## Using MORK through the Python client
 
 The Python client calls the MORK server.  The `ManagedMORK` object establishes a connection to the MORK server.  You may provide a `url` or a `binary_path`, depending on whether you want to connect to a running server or start the server as a child process.
